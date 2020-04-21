@@ -107,7 +107,7 @@ DELETE '/questions/<int:question_id>'
 }
 ```
 
-#### GET '/categories/<int:category_id>/questions'
+#### GET '/categories/category_id/questions'
 
 - Fetches a dictionary of questions questions based on category, the questions are in groups of 10, the  group number is defined by a parameter "page" 
 - Request Arguments: GET parameter 'page' to indicate group number
@@ -173,7 +173,7 @@ DELETE '/questions/<int:question_id>'
 } 
 ```
 
-#### DELETE '/questions/<int:question_id>'
+#### DELETE '/questions/question_id'
 
 - Delete a question using a question ID.
 - Request Arguments:
