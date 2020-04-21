@@ -83,7 +83,7 @@ GET '/categories'
 - Fetches a dictionary for all available categories
 - Request Arguments: None
 - Returns:
-```JSON
+```
 {
  'success': True,                   # request status 
  'categories':                      # Dict with categories { 'id': 'name' }
@@ -98,7 +98,7 @@ GET '/questions'
 - Request Arguments: GET parameter 'page' to indicate the group of questions
 
 - Returns:
-```JSON
+```
 {
   'success': True,
   'questions':                   # List of questions dicts
@@ -114,7 +114,7 @@ GET '/categories/<int:category_id>/questions'
 - Request Arguments: GET parameter 'page' to indicate group number
 
 - Returns:
-```JSON
+```
 {
   'success': True,
   'current_category':           # Selected category ID
@@ -133,7 +133,7 @@ POST '/questions'
     + difficulty: (int) 
 
 - Returns:
-```JSON
+```
 {
     'success': True,
     'created':                          # ID of the new created question
@@ -150,7 +150,7 @@ POST '/questions/search'
     + searchTerm: (string)
 
 - Returns:
-```JSON
+```
 {
     'success': True,
     'questions':                        # list of questions
@@ -168,7 +168,7 @@ POST '/quizzes'
     + quiz_category: category ID to play the quiz     
 
 - Returns:
-```JSON
+```
 {
     'success': True,
     'question':                         # question           
@@ -182,7 +182,7 @@ DELETE '/questions/<int:question_id>'
     + question_id: (int)
 
 - Returns:
-```JSON
+```
 {
     'success': True,
     'question':                 # deleted question ID
