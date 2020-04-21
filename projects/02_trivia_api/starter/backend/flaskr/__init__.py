@@ -146,6 +146,7 @@ def create_app(test_config=None):
       abort(400)
 
     try:
+      # create new question
       question = Question(question=question_text, answer=answer, 
                             category=category, difficulty=difficulty)
       question.insert()
@@ -182,6 +183,7 @@ def create_app(test_config=None):
       if search_term is None:
         abort(422)
 
+      # query if search term is included on question text
       selection = Question.query.filter(Question.question.\
                                         ilike('%{}%'.format(search_term))).all()
       current_questions = paginate_questions(request, selection)
@@ -238,9 +240,11 @@ def create_app(test_config=None):
   def play_quiz():
     body = request.get_json()
     try:
+
       previous_questions = body.get('previous_questions', None)
       category = body.get('quiz_category', None)
 
+      # check if category is 0 = all categories
       if category["id"] == 0:
         questions = Question.query.filter(~Question.id.in_(previous_questions))
       else:
