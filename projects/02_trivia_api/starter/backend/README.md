@@ -78,7 +78,7 @@ POST '/quizzes'
 DELETE '/questions/<int:question_id>'
 ```
 
-##### GET '/categories'
+#### GET '/categories'
 
 - Fetches a dictionary for all available categories
 - Request Arguments: None
@@ -92,7 +92,7 @@ DELETE '/questions/<int:question_id>'
 ```
 
 
-##### GET '/questions'
+#### GET '/questions'
 
 - Fetches a list of questions, number of total questions, current category, categories. The list of questions are in groups of 10, the  group number is defined by a parameter "page"
 - Request Arguments: GET parameter 'page' to indicate the group of questions
@@ -107,7 +107,7 @@ DELETE '/questions/<int:question_id>'
 }
 ```
 
-##### GET '/categories/<int:category_id>/questions'
+#### GET '/categories/<int:category_id>/questions'
 
 - Fetches a dictionary of questions questions based on category, the questions are in groups of 10, the  group number is defined by a parameter "page" 
 - Request Arguments: GET parameter 'page' to indicate group number
@@ -122,7 +122,7 @@ DELETE '/questions/<int:question_id>'
 }
 ```
 
-##### POST '/questions'
+#### POST '/questions'
 
 - Create a new question, require the question and answer text, category, and difficulty score
 - Request Arguments: 
@@ -141,7 +141,7 @@ DELETE '/questions/<int:question_id>'
 }
 ```
 
-##### POST '/questions/search'
+#### POST '/questions/search'
 
 - Search questions based on a search term, if the search term is included in the question text
 - Request Arguments: 
@@ -156,7 +156,7 @@ DELETE '/questions/<int:question_id>'
 }
 ```
 
-##### POST '/quizzes'
+#### POST '/quizzes'
 
 - This endpoint take category and previous question parameters 
   and return a random questions within the given category excluding previous questions
@@ -173,7 +173,7 @@ DELETE '/questions/<int:question_id>'
 } 
 ```
 
-##### DELETE '/questions/<int:question_id>'
+#### DELETE '/questions/<int:question_id>'
 
 - Delete a question using a question ID.
 - Request Arguments:
