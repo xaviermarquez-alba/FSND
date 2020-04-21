@@ -66,29 +66,130 @@ One note before you delve into your tasks: for each endpoint you are expected to
 8. Create a POST endpoint to get questions to play the quiz. This endpoint should take category and previous question parameters and return a random questions within the given category, if provided, and that is not one of the previous questions. 
 9. Create error handlers for all expected errors including 400, 404, 422 and 500. 
 
-REVIEW_COMMENT
+## Endpoints
+
 ```
-This README is missing documentation of your endpoints. Below is an example for your endpoint to get all categories. Please use it as a reference for creating your documentation and resubmit your code. 
-
-Endpoints
 GET '/categories'
-GET ...
-POST ...
-DELETE ...
-
+GET '/questions'
+GET '/categories/<int:category_id>/questions'
+POST '/questions'
+POST '/questions/search'
+POST '/quizzes'
+DELETE '/questions/<int:question_id>'
+```
+```
 GET '/categories'
-- Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
+```
+- Fetches a dictionary for all available categories
 - Request Arguments: None
-- Returns: An object with a single key, categories, that contains a object of id: category_string key:value pairs. 
-{'1' : "Science",
-'2' : "Art",
-'3' : "Geography",
-'4' : "History",
-'5' : "Entertainment",
-'6' : "Sports"}
-
+- Returns:
+```JSON
+{
+ 'success': True,                   # request status 
+ 'categories':                      # Dict with categories { 'id': 'name' }
+ 'total_categories':                # Int: total of categories
+}
 ```
 
+```
+GET '/questions'
+```
+- Fetches a list of questions, number of total questions, current category, categories. The list of questions are in groups of 10, the  group number is defined by a parameter "page"
+- Request Arguments: GET parameter 'page' to indicate the group of questions
+
+- Returns:
+```JSON
+{
+  'success': True,
+  'questions':                   # List of questions dicts
+  'categories':                  # Dict with categories { 'id': 'name' }
+  'total_questions':             # Int: total of questions
+}
+```
+
+```
+GET '/categories/<int:category_id>/questions'
+```
+- Fetches a dictionary of questions questions based on category, the questions are in groups of 10, the  group number is defined by a parameter "page" 
+- Request Arguments: GET parameter 'page' to indicate group number
+
+- Returns:
+```JSON
+{
+  'success': True,
+  'current_category':           # Selected category ID
+  'questions':                  # List of questions dicts
+  'total_questions':            # Int: total of questions
+}
+```
+```
+POST '/questions'
+```
+- Create a new question, require the question and answer text, category, and difficulty score
+- Request Arguments: 
+    + question: (string)
+    + answer: (string)
+    + category: category id (int)
+    + difficulty: (int) 
+
+- Returns:
+```JSON
+{
+    'success': True,
+    'created':                          # ID of the new created question
+    'questions':                        # list of questions
+    'total_questions':                  # total questions
+}
+```
+
+```
+POST '/questions/search'
+```
+- Search questions based on a search term, if the search term is included in the question text
+- Request Arguments: 
+    + searchTerm: (string)
+
+- Returns:
+```JSON
+{
+    'success': True,
+    'questions':                        # list of questions
+    'total_questions':                  # total questions
+}
+```
+```
+POST '/quizzes'
+```
+- This endpoint take category and previous question parameters 
+  and return a random questions within the given category excluding previous questions
+
+- Request Arguments:
+    + previous_questions: list of previous questions IDs
+    + quiz_category: category ID to play the quiz     
+
+- Returns:
+```JSON
+{
+    'success': True,
+    'question':                         # question           
+} 
+```
+```
+DELETE '/questions/<int:question_id>'
+```
+- Delete a question using a question ID.
+- Request Arguments:
+    + question_id: (int)
+
+- Returns:
+```JSON
+{
+    'success': True,
+    'question':                 # deleted question ID
+    'questions':                # list of current questions
+    'total_questions':          # int total of questions remaining
+} 
+```
 
 ## Testing
 To run the tests, run
