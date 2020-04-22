@@ -106,7 +106,8 @@ def verify_decode_jwt(token):
         except jwt.JWTClaimsError:
             raise AuthError({
                 'code': 'invalid_claims',
-                'description': 'Incorrect claims. Please, check the audience and issuer.'
+                'description':
+                'Incorrect claims. Please, check the audience and issuer.'
             }, 401)
         except Exception:
             raise AuthError({
@@ -114,16 +115,17 @@ def verify_decode_jwt(token):
                 'description': 'Unable to parse authentication token.'
             }, 400)
     raise AuthError({
-                'code': 'invalid_header',
-                'description': 'Unable to find the appropriate key.'
-            }, 400)
+        'code': 'invalid_header',
+        'description': 'Unable to find the appropriate key.'
+    }, 400)
+
 
 def check_permissions(permission, payload):
     if 'permissions' not in payload:
-                        raise AuthError({
-                            'code': 'invalid_claims',
-                            'description': 'Permissions not included in JWT.'
-                        }, 400)
+        raise AuthError({
+            'code': 'invalid_claims',
+            'description': 'Permissions not included in JWT.'
+        }, 400)
 
     if permission not in payload['permissions']:
         raise AuthError({
@@ -132,6 +134,7 @@ def check_permissions(permission, payload):
         }, 403)
     return True
 
+
 def requires_auth(permission=''):
     def requires_auth_decorator(f):
         @wraps(f)
@@ -139,7 +142,7 @@ def requires_auth(permission=''):
             token = get_token_auth_header()
             try:
                 payload = verify_decode_jwt(token)
-            except:
+            except KeyError:
                 abort(401)
             check_permissions(permission, payload)
             return f(payload, *args, **kwargs)
@@ -148,49 +151,56 @@ def requires_auth(permission=''):
     return requires_auth_decorator
 
 
-## ROUTES
+# ROUTES
 '''
 @TODO implement endpoint
     GET /drinks
         it should be a public endpoint
         it should contain only the drink.short() data representation
-    returns status code 200 and json {"success": True, "drinks": drinks} where drinks is the list of drinks
+        returns status code 200 and json {"success": True, "drinks": drinks}
+         where drinks is the list of drinks
         or appropriate status code indicating reason for failure
 '''
+
+
 @app.route('/drinks')
 def drinks():
     try:
-        #drinks =[ drink.short for drink in Drink.query.all()]
-        drinks =[ drink.short() for drink in Drink.query.all()]
-        
+        drinks = [drink.short() for drink in Drink.query.all()]
         return jsonify(
             {
                 'success': True,
                 'drinks': drinks,
             })
-    except:
+    except KeyError:
         print(os.sys.exc_info())
         abort(422)
+
+
 '''
 @TODO implement endpoint
     GET /drinks-detail
         it should require the 'get:drinks-detail' permission
         it should contain the drink.long() data representation
-    returns status code 200 and json {"success": True, "drinks": drinks} where drinks is the list of drinks
+        returns status code 200 and json {"success": True, "drinks": drinks}
+        where drinks is the list of drinks
         or appropriate status code indicating reason for failure
 '''
+
+
 @app.route('/drinks-detail')
 @requires_auth('get:drinks-detail')
 def drinks_detail(jwt):
     try:
-        drinks =[ drink.long() for drink in Drink.query.all()]
+        drinks = [drink.long() for drink in Drink.query.all()]
         return jsonify(
             {
                 'success': True,
                 'drinks': drinks,
             })
-    except:
+    except KeyError:
         abort(422)
+
 
 '''
 @TODO implement endpoint
@@ -198,9 +208,12 @@ def drinks_detail(jwt):
         it should create a new row in the drinks table
         it should require the 'post:drinks' permission
         it should contain the drink.long() data representation
-    returns status code 200 and json {"success": True, "drinks": drink} where drink an array containing only the newly created drink
+        returns status code 200 and json {"success": True, "drinks": drink}
+        where drink an array containing only the newly created drink
         or appropriate status code indicating reason for failure
 '''
+
+
 @app.route('/drinks', methods=['POST'])
 @requires_auth('post:drinks')
 def drinks_create(jwt):
@@ -231,6 +244,7 @@ def drinks_create(jwt):
     except KeyError:
         abort(422)
 
+
 '''
 @TODO implement endpoint
     PATCH /drinks/<id>
@@ -239,9 +253,13 @@ def drinks_create(jwt):
         it should update the corresponding row for <id>
         it should require the 'patch:drinks' permission
         it should contain the drink.long() data representation
-    returns status code 200 and json {"success": True, "drinks": drink} where drink an array containing only the updated drink
+        returns status code 200 and json {"success": True, "drinks": drink}
+        where
+    drink an array containing only the updated drink
         or appropriate status code indicating reason for failure
 '''
+
+
 @app.route('/drinks/<int:drink_id>', methods=['PATCH'])
 @requires_auth('patch:drinks')
 def drinks_patch(jwt, drink_id):
@@ -261,9 +279,8 @@ def drinks_patch(jwt, drink_id):
         if drink_title is not None:
             drink.title = drink_title
         if drink_recipe is not None:
-            drink.recipe=json.dumps(drink_recipe)
+            drink.recipe = json.dumps(drink_recipe)
         drink.update()
-        
         return jsonify({
             'success': True,
             'drinks': [drink.long()],
@@ -272,6 +289,7 @@ def drinks_patch(jwt, drink_id):
     except KeyError:
         abort(422)
 
+
 '''
 @TODO implement endpoint
     DELETE /drinks/<id>
@@ -279,9 +297,12 @@ def drinks_patch(jwt, drink_id):
         it should respond with a 404 error if <id> is not found
         it should delete the corresponding row for <id>
         it should require the 'delete:drinks' permission
-    returns status code 200 and json {"success": True, "delete": id} where id is the id of the deleted record
+        returns status code 200 and json {"success": True, "delete": id}
+        where id is the id of the deleted record
         or appropriate status code indicating reason for failure
 '''
+
+
 @app.route('/drinks/<int:drink_id>', methods=['DELETE'])
 @requires_auth('delete:drinks')
 def drinks_delete(jwt, drink_id):
@@ -299,8 +320,8 @@ def drinks_delete(jwt, drink_id):
     except KeyError:
         abort(422)
 
-## Error Handling
 
+# Error Handling
 @app.errorhandler(400)
 def bad_request(error):
     return jsonify(
@@ -309,6 +330,7 @@ def bad_request(error):
             "error": 400,
             "message": "Bad request"
         }), 400
+
 
 @app.errorhandler(401)
 def unauthorized(error):
@@ -319,6 +341,7 @@ def unauthorized(error):
             "message": "Unauthorized "
         }), 401
 
+
 @app.errorhandler(403)
 def forbidden(error):
     return jsonify(
@@ -327,6 +350,7 @@ def forbidden(error):
             "error": 403,
             "message": "Forbidden"
         }), 403
+
 
 @app.errorhandler(404)
 def not_found(error):
@@ -337,6 +361,7 @@ def not_found(error):
             "message": "Resource not found"
         }), 404
 
+
 @app.errorhandler(405)
 def not_allowed(error):
     return jsonify(
@@ -345,6 +370,7 @@ def not_allowed(error):
             "error": 405,
             "message": "Method not allowed"
         }), 405
+
 
 @app.errorhandler(422)
 def unprocessable(error):
@@ -355,6 +381,7 @@ def unprocessable(error):
             "message": "Unprocessable"
         }), 422
 
+
 @app.errorhandler(500)
 def server_error(error):
     return jsonify(
@@ -364,20 +391,22 @@ def server_error(error):
             "message": "Internal server error"
         }), 500
 
+
 '''
 @TODO implement error handler for 404
-    error handler should conform to general task above 
+    error handler should conform to general task above
 '''
-
 
 '''
 @TODO implement error handler for AuthError
-    error handler should conform to general task above 
+    error handler should conform to general task above
 '''
+
+
 @app.errorhandler(AuthError)
 def authentification_failed(AuthError):
     return jsonify({
         "success": False,
         "error": AuthError.status_code,
         "message": AuthError.error
-                }), 401
+    }), 401
