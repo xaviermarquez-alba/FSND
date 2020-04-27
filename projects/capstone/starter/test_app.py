@@ -23,9 +23,7 @@ class AgencyTestCase(unittest.TestCase):
         """Define test variables and initialize app."""
         self.app = create_app()
         self.client = self.app.test_client
-        self.database_filename = "database.db"
-        self.project_dir = os.path.dirname(os.path.abspath(__file__))
-        self.database_path = "sqlite:///{}".format(os.path.join(self.project_dir, self.database_filename))
+        self.database_path = os.environ['DATABASE_URL']
         setup_db(self.app, self.database_path)
 
         self.jwt_all_permissions = os.environ['JWT_TOKEN']
