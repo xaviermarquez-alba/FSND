@@ -3,9 +3,10 @@ from flask import request, _request_ctx_stack
 from functools import wraps
 from jose import jwt
 from urllib.request import urlopen
+import os
 
 
-AUTH0_DOMAIN = 'xaviermm.auth0.com'
+AUTH0_DOMAIN = os.environ['AUTH0_DOMAIN']
 ALGORITHMS = ['RS256']
 API_AUDIENCE = 'casting-agency'
 

@@ -8,7 +8,7 @@ def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__)
     setup_db(app)
-    CORS(app, resources={r"/*": {"origins": "*"}})
+    CORS(app)
 
     @app.after_request
     def after_request(response):
@@ -57,7 +57,7 @@ def create_app(test_config=None):
 
         # if missing some required data
         if any(parameter is None for parameter in [movie_title, movie_release_date]):
-            abort(401)
+            abort(400)
 
         try:
             # create new movie
@@ -93,7 +93,7 @@ def create_app(test_config=None):
         # check if missing some required data
         actor_parameters = [actor_name, actor_gender, actor_age]
         if any(parameter is None for parameter in actor_parameters):
-            abort(401)
+            abort(400)
 
         try:
             # create new actor
@@ -157,11 +157,11 @@ def create_app(test_config=None):
     @requires_auth('patch:movies')
     def movie_patch(jwt, movie_id):
         # if body exists
-        try:
-            body = request.get_json()
+        body = request.get_json()
+        if body:
             movie_title = body.get('title', None)
             movie_release_date = body.get('release_date', None)
-        except KeyError:
+        else:
             abort(422)
 
         movie = Movie.query.filter(Movie.id == movie_id).one_or_none()
@@ -191,12 +191,12 @@ def create_app(test_config=None):
     @requires_auth('patch:actors')
     def actor_patch(jwt, actor_id):
         # if body exists
-        try:
-            body = request.get_json()
+        body = request.get_json()
+        if body:
             actor_name = body.get('name', None)
             actor_age = body.get('age', None)
             actor_gender = body.get('gender', None)
-        except KeyError:
+        else:
             abort(422)
 
         actor = Actor.query.filter(Actor.id == actor_id).one_or_none()
@@ -234,7 +234,7 @@ def create_app(test_config=None):
             movie.delete()
             return jsonify({
                 'success': True,
-                'delete': movie_id,
+                'movie_id': movie_id,
             })
 
         except KeyError:
@@ -252,7 +252,7 @@ def create_app(test_config=None):
             actor.delete()
             return jsonify({
                 'success': True,
-                'delete': actor_id,
+                'actor_id': actor_id,
             })
 
         except KeyError:
@@ -275,7 +275,7 @@ def create_app(test_config=None):
             {
                 "success": False,
                 "error": 401,
-                "message": "Unauthorized "
+                "message": "Unauthorized"
             }), 401
 
     @app.errorhandler(403)
@@ -311,7 +311,7 @@ def create_app(test_config=None):
             {
                 "success": False,
                 "error": 422,
-                "message": "Unprocessable"
+                "message": "Unprocessable entity"
             }), 422
 
     @app.errorhandler(500)
